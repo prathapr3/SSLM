@@ -5,7 +5,7 @@
 import glob
 import os
 
-def aggregate_txt_files(directory_path, output_filename="combined_output.txt"):
+def aggregate_txt_files(directory_path, output_filename="/Users/prathara/Code/SSLM/SSLM/src/corpus.txt"):
     """
     Reads all .txt files from a directory and aggregates them into one large file.
 
@@ -13,9 +13,15 @@ def aggregate_txt_files(directory_path, output_filename="combined_output.txt"):
         directory_path (str): The path to the directory containing the .txt files.
         output_filename (str): The name of the single output file (will be created in the current working directory).
     """
+
+    print(directory_path)
+
     # Use glob to find all files matching the pattern, and sort them alphabetically
     # The pattern matches all .txt files within the specified directory
     pattern = os.path.join(directory_path, '*.txt')
+
+    print(pattern)
+
     file_paths = sorted(glob.glob(pattern))
     
     if not file_paths:
@@ -44,10 +50,5 @@ def aggregate_txt_files(directory_path, output_filename="combined_output.txt"):
     print(f"\nMerging completed. All text files have been merged into: {output_filename}")
 
 if __name__ == "__main__":
-    # --- Example Usage ---
-    # Replace 'your_directory_path_here' with the path to your folder
-    # Example: aggregate_txt_files("C:/Users/YourUser/Documents/my_texts")
-    # Example: aggregate_txt_files("./text_files") # For a local folder named 'text_files'
-
     # Example for the current directory
-    aggregate_txt_files(".") 
+    aggregate_txt_files("/Users/prathara/Code/SSLM/SSLM/sankrit_corpus")
