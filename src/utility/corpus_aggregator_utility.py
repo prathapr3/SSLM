@@ -4,6 +4,8 @@
 
 import glob
 import os
+import json
+import re
 
 def aggregate_txt_files(directory_path, output_filename="/Users/prathara/Code/SSLM/SSLM/src/corpus.txt"):
     """
@@ -49,6 +51,27 @@ def aggregate_txt_files(directory_path, output_filename="/Users/prathara/Code/SS
 
     print(f"\nMerging completed. All text files have been merged into: {output_filename}")
 
+def create_vocab():
+    with open("/Users/prathara/Code/SSLM/SSLM/src/corpus.txt", "r", encoding="utf-8") as f:
+        raw_text = f.read()
+
+    preprocessed = re.split(r'([,.:;?_!"()\']|--|\s)', raw_text)
+    preprocessed = [item.strip() for item in preprocessed if item.strip()]
+    all_words = sorted(set(preprocessed))
+
+    vocab = {token:integer for integer,token in enumerate(all_words)}
+
+    # serialize and write the vocab to a file
+    vocab_filename = '/Users/prathara/Code/SSLM/SSLM/src/vocab.json'
+
+    # open the file in write mode ('w') and use json.dump()
+    try:
+        with open(vocab_filename, 'w') as json_file:
+            json.dump(vocab, json_file, indent=4)
+    except IOError as e:
+        print(f"Error writing to file: {e}")
+
 if __name__ == "__main__":
     # Example for the current directory
-    aggregate_txt_files("/Users/prathara/Code/SSLM/SSLM/sankrit_corpus")
+#    aggregate_txt_files("/Users/prathara/Code/SSLM/SSLM/sankrit_corpus")
+    create_vocab()
