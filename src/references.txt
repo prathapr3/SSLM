@@ -1,0 +1,2 @@
+One Model is All You Need: ByT5-Sanskrit, a Unified Model for Sanskrit NLP Tasks; https://arxiv.org/html/2409.13920v1
+
