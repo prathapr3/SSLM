@@ -4,7 +4,7 @@
 
 import re
 import json
-from . import sanskrit_tokenizer as ST
+import sanskrit_tokenizer as ST
 
 # with open("/Users/prathara/Code/SSLM/SSLM/src/corpus.txt", "r", encoding="utf-8") as f:
 #     raw_text = f.read()
@@ -24,11 +24,14 @@ from . import sanskrit_tokenizer as ST
 #         print(f"Error writing to file: {e}")
 
 vocab_filename = '/Users/prathara/Code/SSLM/SSLM/src/vocab.json'
-vocab = ''
 
 try:
     with open(vocab_filename, "r") as file_handle:
         vocab = json.load(file_handle)
+
+    sanskrit_tokenizer = ST.SanskritTokenizer(vocab)
+    # print(sanskrit_tokenizer.decode(sanskrit_tokenizer.encode("अर्थः अस्मद्युपपदे समानाभिधेये सति प्रयुज्यमानेऽप्यप्रयुज्यमानेऽप्युत्तमपुरुषो भवति।")))
+    print(sanskrit_tokenizer.decode(sanskrit_tokenizer.encode("अस्ति कश्चित् वाग्विशेषः।")))
 
     # # Now you can use the data as a regular Python dictionary
     # for i, item in enumerate(data_dict.items()):
@@ -40,5 +43,3 @@ except FileNotFoundError:
 except json.JSONDecodeError:
     print("Error: Could not decode JSON from the file.")
 
-sanskrit_tokenizer = ST.SanskritTokenizer(vocab)
-print(sanskrit_tokenizer.encode("सम्बन्धादेवमन्यत्रापि"))

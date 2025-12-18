@@ -52,7 +52,8 @@ def aggregate_txt_files(directory_path, output_filename="/Users/prathara/Code/SS
     print(f"\nMerging completed. All text files have been merged into: {output_filename}")
 
 def create_vocab():
-    with open("/Users/prathara/Code/SSLM/SSLM/src/corpus.txt", "r", encoding="utf-8") as f:
+    # with open("/Users/prathara/Code/sanskrit_corpus/corpus.txt", "r", encoding="utf-8") as f:
+    with open("/Users/prathara/Code/SSLM/SSLM/src/dev.txt", "r", encoding="utf-8") as f:
         raw_text = f.read()
 
     preprocessed = re.split(r'([,.:;?_!"()\']|--|\s)', raw_text)
