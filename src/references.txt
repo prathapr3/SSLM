@@ -1,2 +1,2 @@
 One Model is All You Need: ByT5-Sanskrit, a Unified Model for Sanskrit NLP Tasks; https://arxiv.org/html/2409.13920v1
-
+Panini Ashtadhyayi Sutras with Commentaries: Sortable Index: https://sanskritdocuments.org/learning_tools/ashtadhyayi/
