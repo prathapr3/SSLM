@@ -58,7 +58,7 @@ def create_vocab():
     preprocessed = re.split(r'([,.:;?_!"()\']|--|\s)', raw_text)
     preprocessed = [item.strip() for item in preprocessed if item.strip()]
     all_words = sorted(set(preprocessed))
-
+    all_words.extend(["<|endoftext|>", "<|unk|>"])
     vocab = {token:integer for integer,token in enumerate(all_words)}
 
     # serialize and write the vocab to a file
