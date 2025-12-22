@@ -2,12 +2,14 @@
 # Code to play with data and find right code to move forward
 #
 
-import re
+# import re
 import json
-import sanskrit_tokenizer as st
-import tiktoken as tk
-import sanskrit_data_loader as sdl
+# import sanskrit_tokenizer as st
+# import tiktoken as tk
+# import sanskrit_data_loader as sdl
 import general_utility as gu
+import torch
+import time
 
 # with open("/Users/prathara/Code/SSLM/SSLM/src/corpus.txt", "r", encoding="utf-8") as f:
 #     raw_text = f.read()
@@ -52,22 +54,35 @@ import general_utility as gu
 # except json.JSONDecodeError:
 #     print("Error: Could not decode JSON from the file.")
 
-with open("dev.txt", "r", encoding="utf-8") as f:
-    raw_text = f.read()
+# with open("dev.txt", "r", encoding="utf-8") as f:
+#     raw_text = f.read()
 
-dataloader = gu.create_dataloader_v1(raw_text, batch_size=1, max_length=4, stride=1, shuffle=False)
+# dataloader = gu.create_dataloader_v1(raw_text, batch_size=1, max_length=4, stride=1, shuffle=False)
 
-data_iter = iter(dataloader)
-first_batch = next(data_iter)
-print(first_batch)
+# data_iter = iter(dataloader)
+# first_batch = next(data_iter)
+# print(first_batch)
 
-second_batch = next(data_iter)
-print(second_batch)
+# second_batch = next(data_iter)
+# print(second_batch)
 
-dataloader = gu.create_dataloader_v1(raw_text, batch_size=8, max_length=4, stride=4, shuffle=False)
+# dataloader = gu.create_dataloader_v1(raw_text, batch_size=8, max_length=4, stride=4, shuffle=False)
 
-data_iter = iter(dataloader)
-inputs, targets = next(data_iter)
-print("Inputs:\n", inputs)
-print("\nTargets:\n", targets)
+# data_iter = iter(dataloader)
+# inputs, targets = next(data_iter)
+# print("Inputs:\n", inputs)
+# print("\nTargets:\n", targets)
 
+current_time_seconds = time.time()
+torch.manual_seed(current_time_seconds)
+vocab_filename = 'vocab.json'
+vocab_size = 10000
+output_dim = 768
+
+with open(vocab_filename, "r") as file_handle:
+    vocab = json.load(file_handle)
+    vocab_size = len(vocab)
+    print("Vocab Size:", vocab_size)
+
+embedding_layer = torch.nn.Embedding(vocab_size, output_dim)
+print(embedding_layer.weight)
