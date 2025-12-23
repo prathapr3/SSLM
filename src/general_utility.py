@@ -12,4 +12,4 @@ def create_dataloader_v1(txt, batch_size=4, max_length=256, stride=128, shuffle=
     # Create dataloader
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, drop_last=drop_last, num_workers=num_workers)
 
-    return dataloader
+    return dataloader, tokenizer

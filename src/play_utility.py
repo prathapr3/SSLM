@@ -54,8 +54,18 @@ import time
 # except json.JSONDecodeError:
 #     print("Error: Could not decode JSON from the file.")
 
-# with open("dev.txt", "r", encoding="utf-8") as f:
-#     raw_text = f.read()
+# vocab_filename = 'vocab.json'
+# vocab_size = 10000
+# output_dim = 768
+
+# with open(vocab_filename, "r") as file_handle:
+#     vocab = json.load(file_handle)
+#     vocab_size = len(vocab)
+#     print("Vocab Size:", vocab_size)
+
+
+with open("dev.txt", "r", encoding="utf-8") as f:
+    raw_text = f.read()
 
 # dataloader = gu.create_dataloader_v1(raw_text, batch_size=1, max_length=4, stride=1, shuffle=False)
 
@@ -66,23 +76,31 @@ import time
 # second_batch = next(data_iter)
 # print(second_batch)
 
-# dataloader = gu.create_dataloader_v1(raw_text, batch_size=8, max_length=4, stride=4, shuffle=False)
+dataloader, vocab = gu.create_dataloader_v1(raw_text, batch_size=8, max_length=4, stride=4, shuffle=False)
+output_dim = 768
 
-# data_iter = iter(dataloader)
-# inputs, targets = next(data_iter)
-# print("Inputs:\n", inputs)
-# print("\nTargets:\n", targets)
+data_iter = iter(dataloader)
+inputs, targets = next(data_iter)
+print("Inputs:\n", inputs)
+print("\nTargets:\n", targets)
+print("\nInputs shape:\n", inputs.shape)
 
 current_time_seconds = time.time()
 torch.manual_seed(current_time_seconds)
-vocab_filename = 'vocab.json'
-vocab_size = 10000
-output_dim = 768
-
-with open(vocab_filename, "r") as file_handle:
-    vocab = json.load(file_handle)
-    vocab_size = len(vocab)
-    print("Vocab Size:", vocab_size)
-
-embedding_layer = torch.nn.Embedding(vocab_size, output_dim)
+embedding_layer = torch.nn.Embedding(vocab.n_vocab, output_dim)
 print(embedding_layer.weight)
+
+token_embeddings = embedding_layer(inputs)
+print(token_embeddings.shape)
+
+max_length = 4
+context_length = max_length
+pos_embedding_layer = torch.nn.Embedding(context_length, output_dim)
+
+position_embeddings = pos_embedding_layer(torch.arange(max_length))
+print(position_embeddings.shape)
+print(position_embeddings)
+
+combined_embeddings = token_embeddings + position_embeddings.unsqueeze(0)
+print(combined_embeddings.shape)    # Should be (batch_size, max_length, output_dim)
+print(combined_embeddings)
