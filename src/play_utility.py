@@ -1,15 +1,76 @@
 #
 # Code to play with data and find right code to move forward
 #
-
-# import re
-import json
-# import sanskrit_tokenizer as st
-# import tiktoken as tk
-# import sanskrit_data_loader as sdl
 import general_utility as gu
 import torch
 import time
+
+output_dim = 10
+max_length = 4
+context_length = max_length
+
+with open("dev.txt", "r", encoding="utf-8") as f:
+    raw_text = f.read()
+
+dataloader, vocab = gu.create_dataloader_v1(raw_text, batch_size=8, max_length=4, stride=4, shuffle=False)
+
+data_iter = iter(dataloader)
+inputs, targets = next(data_iter)
+current_time_seconds = time.time()
+torch.manual_seed(current_time_seconds)
+embedding_layer = torch.nn.Embedding(vocab.n_vocab, output_dim)
+token_embeddings = embedding_layer(inputs)
+pos_embedding_layer = torch.nn.Embedding(context_length, output_dim)
+position_embeddings = pos_embedding_layer(torch.arange(max_length))
+combined_embeddings = token_embeddings + position_embeddings.unsqueeze(0)
+#print(combined_embeddings.shape)    # Should be (batch_size, max_length, output_dim)
+#print(combined_embeddings)
+
+query = combined_embeddings[0][1]
+print(query)
+print(combined_embeddings[0])
+attn_scores_2 = torch.empty(combined_embeddings[0].shape[0])
+for i, x_i in enumerate(combined_embeddings[0]):
+    attn_scores_2[i] = torch.dot(x_i, query)
+
+print(attn_scores_2)
+attn_weights_2 = torch.softmax(attn_scores_2, dim=0)
+print("Attention weights:", attn_weights_2)
+print("Sum:", attn_weights_2.sum())
+
+context_vec_2 = torch.zeros(query.shape)
+for i,x_i in enumerate(combined_embeddings[0]):
+    context_vec_2 += attn_weights_2[i]*x_i
+print(context_vec_2)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ----------------------------
+# import json
+# import re
+# import sanskrit_tokenizer as st
+# import tiktoken as tk
+# import sanskrit_data_loader as sdl
+
+# dataloader = gu.create_dataloader_v1(raw_text, batch_size=1, max_length=4, stride=1, shuffle=False)
+
+# data_iter = iter(dataloader)
+# first_batch = next(data_iter)
+# print(first_batch)
+
+# second_batch = next(data_iter)
+# print(second_batch)
 
 # with open("/Users/prathara/Code/SSLM/SSLM/src/corpus.txt", "r", encoding="utf-8") as f:
 #     raw_text = f.read()
@@ -62,45 +123,3 @@ import time
 #     vocab = json.load(file_handle)
 #     vocab_size = len(vocab)
 #     print("Vocab Size:", vocab_size)
-
-
-with open("dev.txt", "r", encoding="utf-8") as f:
-    raw_text = f.read()
-
-# dataloader = gu.create_dataloader_v1(raw_text, batch_size=1, max_length=4, stride=1, shuffle=False)
-
-# data_iter = iter(dataloader)
-# first_batch = next(data_iter)
-# print(first_batch)
-
-# second_batch = next(data_iter)
-# print(second_batch)
-
-dataloader, vocab = gu.create_dataloader_v1(raw_text, batch_size=8, max_length=4, stride=4, shuffle=False)
-output_dim = 768
-
-data_iter = iter(dataloader)
-inputs, targets = next(data_iter)
-print("Inputs:\n", inputs)
-print("\nTargets:\n", targets)
-print("\nInputs shape:\n", inputs.shape)
-
-current_time_seconds = time.time()
-torch.manual_seed(current_time_seconds)
-embedding_layer = torch.nn.Embedding(vocab.n_vocab, output_dim)
-print(embedding_layer.weight)
-
-token_embeddings = embedding_layer(inputs)
-print(token_embeddings.shape)
-
-max_length = 4
-context_length = max_length
-pos_embedding_layer = torch.nn.Embedding(context_length, output_dim)
-
-position_embeddings = pos_embedding_layer(torch.arange(max_length))
-print(position_embeddings.shape)
-print(position_embeddings)
-
-combined_embeddings = token_embeddings + position_embeddings.unsqueeze(0)
-print(combined_embeddings.shape)    # Should be (batch_size, max_length, output_dim)
-print(combined_embeddings)
