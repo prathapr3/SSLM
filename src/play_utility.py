@@ -14,7 +14,6 @@ with open("dev.txt", "r", encoding="utf-8") as f:
     raw_text = f.read()
 
 dataloader, vocab = gu.create_dataloader_v1(raw_text, batch_size=8, max_length=4, stride=4, shuffle=False)
-
 data_iter = iter(dataloader)
 inputs, targets = next(data_iter)
 current_time_seconds = time.time()
@@ -73,11 +72,19 @@ print(combined_embeddings.shape)    # Should be (batch_size, max_length, output_
 # print(context_vec_2)
 
 
-sa_v1 = sa.CausalAttention(output_dim, output_dim, context_length, qkv_bias=False)
-for i in range(combined_embeddings.shape[0]):
-    context_vec_sa = sa_v1(combined_embeddings[i])
-    #print("Context vector from SelfAttention:", context_vec_sa)
+# sa_v1 = sa.CausalAttention(output_dim, output_dim, context_length, dropout=False, qkv_bias=False)
+# for i in range(combined_embeddings.shape[0]):
+#     context_vec_sa = sa_v1(combined_embeddings[i])
+#     #print("Context vector from SelfAttention:", context_vec_sa)
 
+# sa_v2 = sa.MultiHeadAttentionWrapper(output_dim, output_dim, context_length, dropout=False, num_heads=2, qkv_bias=False)
+# for i in range(combined_embeddings.shape[0]):
+#     context_vec_sa = sa_v2(combined_embeddings[i])
+#     print("Context vector from SelfAttention:", context_vec_sa)
+
+mha = sa.MultiHeadAttention(output_dim, output_dim, context_length, dropout=False, num_heads=2, qkv_bias=False)
+context_vec_sa = mha(combined_embeddings)
+print("Context vector from SelfAttention:", context_vec_sa)
 
 # ----------------------------
 # import json
