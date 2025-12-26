@@ -4,6 +4,7 @@
 import general_utility as gu
 import torch
 import time
+import self_attention as sa
 
 output_dim = 10
 max_length = 4
@@ -23,37 +24,59 @@ token_embeddings = embedding_layer(inputs)
 pos_embedding_layer = torch.nn.Embedding(context_length, output_dim)
 position_embeddings = pos_embedding_layer(torch.arange(max_length))
 combined_embeddings = token_embeddings + position_embeddings.unsqueeze(0)
-#print(combined_embeddings.shape)    # Should be (batch_size, max_length, output_dim)
+print(combined_embeddings.shape)    # Should be (batch_size, max_length, output_dim)
 #print(combined_embeddings)
 
-query = combined_embeddings[0][1]
-print(query)
-print(combined_embeddings[0])
-attn_scores_2 = torch.empty(combined_embeddings[0].shape[0])
-for i, x_i in enumerate(combined_embeddings[0]):
-    attn_scores_2[i] = torch.dot(x_i, query)
+# for i in range(combined_embeddings.shape[0]):
+#     query = combined_embeddings[i][1]
+#     attn_scores = torch.empty(combined_embeddings[i].shape[0])
+#     for j, x_j in enumerate(combined_embeddings[i]):
+#         attn_scores[j] = torch.dot(x_j, query)
+    
+#     attn_weights = torch.softmax(attn_scores, dim=0)
+#     # print("Attention weights:", attn_weights)
+#     # print("Sum:", attn_weights.sum())
 
-print(attn_scores_2)
-attn_weights_2 = torch.softmax(attn_scores_2, dim=0)
-print("Attention weights:", attn_weights_2)
-print("Sum:", attn_weights_2.sum())
+#     context_vec = torch.zeros(query.shape)
+#     for k,x_k in enumerate(combined_embeddings[i]):
+#         context_vec += attn_weights[k]*x_k
+#     print(context_vec)
 
-context_vec_2 = torch.zeros(query.shape)
-for i,x_i in enumerate(combined_embeddings[0]):
-    context_vec_2 += attn_weights_2[i]*x_i
-print(context_vec_2)
+# first_element = combined_embeddings[0]
+# print("First element shape:", first_element.shape)  # Should be (max_length, output_dim)
+# print("First element:", first_element)
+
+# W_query = torch.nn.Parameter(torch.rand(output_dim, output_dim), requires_grad=False)
+# W_key = torch.nn.Parameter(torch.rand(output_dim, output_dim), requires_grad=False)
+# W_value = torch.nn.Parameter(torch.rand(output_dim, output_dim), requires_grad=False)
+
+# x_2 = first_element[1]  # Shape: (output_dim,)
+# query_2 = torch.matmul(x_2, W_query)  # Shape: (output_dim,)
+# key_2 = torch.matmul(x_2, W_key)  # Shape: (output_dim,)
+# value_2 = torch.matmul(x_2, W_value)  # Shape: (output_dim,)
+# print(query_2)
+
+# keys = torch.matmul(first_element, W_key)  # Shape: (output_dim,)
+# values = torch.matmul(first_element, W_value)  # Shape: (output_dim,)
+# print(keys.shape)  # Should be (max_length, output_dim)
+# print(values.shape)  # Should be (max_length, output_dim)
 
 
+# attn_scores_2 = query_2 @ keys.T
+# print(attn_scores_2)
+
+# d_k = keys.shape[-1]
+# attn_weights_2 = torch.softmax(attn_scores_2 / d_k**0.5, dim=-1)
+# print(attn_weights_2)
+
+# context_vec_2 = attn_weights_2 @ values
+# print(context_vec_2)
 
 
-
-
-
-
-
-
-
-
+sa_v1 = sa.CausalAttention(output_dim, output_dim, context_length, qkv_bias=False)
+for i in range(combined_embeddings.shape[0]):
+    context_vec_sa = sa_v1(combined_embeddings[i])
+    #print("Context vector from SelfAttention:", context_vec_sa)
 
 
 # ----------------------------
