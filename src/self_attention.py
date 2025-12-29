@@ -23,7 +23,7 @@ class SelfAttention(nn.Module):
         return context_vec
 
 class CausalAttention(nn.Module):
-    def __init__(self, d_in, d_out, context_length, dropout=False, qkv_bias=False):
+    def __init__(self, d_in, d_out, context_length, dropout, qkv_bias=False):
         super().__init__()
         self.d_out = d_out
         self.d_in = d_in
@@ -31,7 +31,7 @@ class CausalAttention(nn.Module):
         self.W_query = nn.Linear(d_in, d_out, bias=qkv_bias)
         self.W_key = nn.Linear(d_in, d_out, bias=qkv_bias)
         self.W_value = nn.Linear(d_in, d_out, bias=qkv_bias)
-        self.dropout = nn.Dropout(dropout) if dropout else None
+        self.dropout = nn.Dropout(dropout)
         # self.register_buffer('mask', torch.triu(torch.ones(context_length, context_length), diagonal=1))
 
     def forward(self, x):
@@ -42,13 +42,13 @@ class CausalAttention(nn.Module):
         mask = torch.triu(torch.ones(self.context_length, self.context_length), diagonal=1)
         masked = attn_scores.masked_fill(mask.bool(), -torch.inf)
         attn_weights = torch.softmax(masked / keys.shape[-1]**0.5, dim=1)
-        attn_weights = self.dropout(attn_weights) if self.dropout else attn_weights
+        attn_weights = self.dropout(attn_weights)
         #print("Attention weights:", attn_weights)
         context_vec = attn_weights @ values
         return context_vec
 
 class MultiHeadAttentionWrapper(nn.Module):
-    def __init__(self, d_in, d_out, context_length, dropout=False, num_heads=1, qkv_bias=False):
+    def __init__(self, d_in, d_out, context_length, dropout, num_heads=1, qkv_bias=False):
         super().__init__()
         self.heads = nn.ModuleList(
             [CausalAttention(d_in, d_out, context_length, dropout, qkv_bias)
