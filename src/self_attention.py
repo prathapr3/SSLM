@@ -3,7 +3,6 @@ import torch.nn as nn
 import time
 
 class SelfAttention(nn.Module):
-
     def __init__(self, d_in, d_out):
         super().__init__()
         self.d_out = d_out
@@ -67,6 +66,7 @@ class MultiHeadAttention(nn.Module):
         self.d_out = d_out
         self.num_heads = num_heads
         self.head_dim = d_out // num_heads # Reduce the projection dim to match desired output dim
+        print("Head dim:", self.head_dim)
 
         self.W_query = nn.Linear(d_in, d_out, bias=qkv_bias)
         self.W_key = nn.Linear(d_in, d_out, bias=qkv_bias)
@@ -89,17 +89,20 @@ class MultiHeadAttention(nn.Module):
         keys = self.W_key(x) # Shape: (b, num_tokens, d_out)
         queries = self.W_query(x)
         values = self.W_value(x)
+        print("Keys org:", keys[0])
 
         # We implicitly split the matrix by adding a `num_heads` dimension
         # Unroll last dim: (b, num_tokens, d_out) -> (b, num_tokens, num_heads, head_dim)
         keys = keys.view(b, num_tokens, self.num_heads, self.head_dim) 
         values = values.view(b, num_tokens, self.num_heads, self.head_dim)
         queries = queries.view(b, num_tokens, self.num_heads, self.head_dim)
+        print("Keys after splitting:", keys[0])
 
         # Transpose: (b, num_tokens, num_heads, head_dim) -> (b, num_heads, num_tokens, head_dim)
         keys = keys.transpose(1, 2)
         queries = queries.transpose(1, 2)
         values = values.transpose(1, 2)
+        print("Keys after transposing:", keys[0])
 
         # Compute scaled dot-product attention (aka self-attention) with a causal mask
         attn_scores = queries @ keys.transpose(2, 3)  # Dot product for each head

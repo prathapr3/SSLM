@@ -78,14 +78,14 @@ print(combined_embeddings.shape)    # Should be (batch_size, max_length, output_
 #     context_vec_sa = sa_v1(combined_embeddings[i])
 #     #print("Context vector from SelfAttention:", context_vec_sa)
 
-sa_v2 = sa.MultiHeadAttentionWrapper(output_dim, output_dim, context_length, dropout=0.5, num_heads=2, qkv_bias=False)
-for i in range(combined_embeddings.shape[0]):
-    context_vec_sa = sa_v2(combined_embeddings[i])
-    print("Context vector from SelfAttention:", context_vec_sa)
+# sa_v2 = sa.MultiHeadAttentionWrapper(output_dim, output_dim, context_length, dropout=0.5, num_heads=2, qkv_bias=False)
+# for i in range(combined_embeddings.shape[0]):
+#     context_vec_sa = sa_v2(combined_embeddings[i])
+#     print("Context vector from SelfAttention:", context_vec_sa)
 
-# mha = sa.MultiHeadAttention(output_dim, output_dim, context_length, dropout=0.1, num_heads=2, qkv_bias=False)
-# context_vec_sa = mha(combined_embeddings)
-# print("Context vector from SelfAttention:", context_vec_sa)
+mha = sa.MultiHeadAttention(output_dim, output_dim, context_length, dropout=0.1, num_heads=2, qkv_bias=False)
+context_vec_sa = mha(combined_embeddings)
+#print("Context vector from SelfAttention:", context_vec_sa)
 
 # ----------------------------
 # import json
