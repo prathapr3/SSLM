@@ -114,14 +114,6 @@ if __name__ == "__main__":
     txt2 = "स हि देवरसंयुक्तो मम भर्ता महाद्युतिः। निर्भयो वीर्यमाश्रित्य शून्ये वसति दण्डके॥"
     batch.append(torch.tensor(tokenizer.encode(txt1)))
     batch = torch.stack(batch, dim=0)
-    print(batch.shape)
-    print(batch)
-#    print("Batch before padding 1:", batch)
-#    print(tokenizer.decode(tokenizer.encode(txt1)))
-#    batch.append(torch.tensor(tokenizer.encode(txt2)))
-#    print("Batch before padding 2:", batch)
-#    batch = torch.stack(batch, dim=0)
-#    print(batch)
 
     # sample_input = torch.randint(0, GPT_CONFIG_124M["vocab_size"], (2, 16))
     torch.manual_seed(time.time())
