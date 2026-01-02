@@ -1,31 +1,58 @@
 #
 # Code to play with data and find right code to move forward
 #
-import general_utility as gu
+
+#import self_attention as sa
+
 import torch
 import time
-import self_attention as sa
+import sanskrit_llm as sllm
+import tiktoken as tk
+import general_utility as gu
 
 output_dim = 10
 max_length = 4
 context_length = max_length
 
-with open("dev.txt", "r", encoding="utf-8") as f:
-    raw_text = f.read()
+model = sllm.load_sanskrit_llm_model()
+tokenizer = tk.get_encoding("gpt2")
+batch = []
+txt1 = "स ते वीर्यं बलं दर्पमुत्सेकं च तथाविधम्। व्यपनेष्यति गात्रेभ्यः शरवर्षेण संयुगे॥"
+txt2 = "स हि देवरसंयुक्तो मम भर्ता महाद्युतिः। निर्भयो वीर्यमाश्रित्य शून्ये वसति दण्डके॥"
+batch.append(torch.tensor(tokenizer.encode(txt2)))
+batch = torch.stack(batch, dim=0)
+torch.manual_seed(time.time())
+model.eval()
+output = gu.generate_text_simple(model=model, idx=batch, max_new_tokens=8, context_size=sllm.GPT_CONFIG_124M["context_length"])
+print("Output shape:", output.shape)
+print("Output:", output)
+print("Decoded Output:", tokenizer.decode(output[0].tolist()))
 
-dataloader, vocab = gu.create_dataloader_v1(raw_text, batch_size=8, max_length=4, stride=4, shuffle=False)
-print("Vocab size:", vocab.n_vocab)
-data_iter = iter(dataloader)
-inputs, targets = next(data_iter)
-current_time_seconds = time.time()
-torch.manual_seed(current_time_seconds)
-embedding_layer = torch.nn.Embedding(vocab.n_vocab, output_dim)
-token_embeddings = embedding_layer(inputs)
-pos_embedding_layer = torch.nn.Embedding(context_length, output_dim)
-position_embeddings = pos_embedding_layer(torch.arange(max_length))
-combined_embeddings = token_embeddings + position_embeddings.unsqueeze(0)
-print(combined_embeddings.shape)    # Should be (batch_size, max_length, output_dim)
+
+
+
+
+# ----------------------------
+# with open("dev.txt", "r", encoding="utf-8") as f:
+#     raw_text = f.read()
+
+# dataloader, vocab = gu.create_dataloader_v1(raw_text, batch_size=8, max_length=4, stride=4, shuffle=False)
+# print("Vocab size:", vocab.n_vocab)
+# data_iter = iter(dataloader)
+# inputs, targets = next(data_iter)
+# current_time_seconds = time.time()
+# torch.manual_seed(current_time_seconds)
+# embedding_layer = torch.nn.Embedding(vocab.n_vocab, output_dim)
+# token_embeddings = embedding_layer(inputs)
+# pos_embedding_layer = torch.nn.Embedding(context_length, output_dim)
+# position_embeddings = pos_embedding_layer(torch.arange(max_length))
+# combined_embeddings = token_embeddings + position_embeddings.unsqueeze(0)
+# print(combined_embeddings.shape)    # Should be (batch_size, max_length, output_dim)
 #print(combined_embeddings)
+
+# mha = sa.MultiHeadAttention(output_dim, output_dim, context_length, dropout=0.1, num_heads=2, qkv_bias=False)
+# context_vec_sa = mha(combined_embeddings)
+#print("Context vector from SelfAttention:", context_vec_sa)
 
 # for i in range(combined_embeddings.shape[0]):
 #     query = combined_embeddings[i][1]
@@ -83,9 +110,6 @@ print(combined_embeddings.shape)    # Should be (batch_size, max_length, output_
 #     context_vec_sa = sa_v2(combined_embeddings[i])
 #     print("Context vector from SelfAttention:", context_vec_sa)
 
-mha = sa.MultiHeadAttention(output_dim, output_dim, context_length, dropout=0.1, num_heads=2, qkv_bias=False)
-context_vec_sa = mha(combined_embeddings)
-#print("Context vector from SelfAttention:", context_vec_sa)
 
 # ----------------------------
 # import json
