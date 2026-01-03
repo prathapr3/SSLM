@@ -4,3 +4,5 @@ numpy
 pypdf
 transformers
 importlib
+matplotlib
+

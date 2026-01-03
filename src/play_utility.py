@@ -55,7 +55,7 @@ print("Text 2:", target_probas_2)
 # with open("dev.txt", "r", encoding="utf-8") as f:
 #     raw_text = f.read()
 
-# dataloader, vocab = gu.create_dataloader_v1(raw_text, batch_size=8, max_length=4, stride=4, shuffle=False)
+# dataloader, vocab = gu.create_dataloader(raw_text, batch_size=8, max_length=4, stride=4, shuffle=False)
 # print("Vocab size:", vocab.n_vocab)
 # data_iter = iter(dataloader)
 # inputs, targets = next(data_iter)
@@ -137,7 +137,7 @@ print("Text 2:", target_probas_2)
 # import tiktoken as tk
 # import sanskrit_data_loader as sdl
 
-# dataloader = gu.create_dataloader_v1(raw_text, batch_size=1, max_length=4, stride=1, shuffle=False)
+# dataloader = gu.create_dataloader(raw_text, batch_size=1, max_length=4, stride=1, shuffle=False)
 
 # data_iter = iter(dataloader)
 # first_batch = next(data_iter)

@@ -7,7 +7,7 @@ import os
 import json
 import re
 
-def aggregate_txt_files(directory_path, output_filename="/Users/prathara/Code/SSLM/SSLM/src/corpus.txt"):
+def aggregate_txt_files(directory_path, output_filename="/home/haritsa/gudu/SSLM/SSLM/src/corpus.txt"):
     """
     Reads all .txt files from a directory and aggregates them into one large file.
 
@@ -74,5 +74,5 @@ def create_vocab():
 
 if __name__ == "__main__":
     # Example for the current directory
-#    aggregate_txt_files("/Users/prathara/Code/SSLM/SSLM/sankrit_corpus")
-    create_vocab()
+    aggregate_txt_files("/home/haritsa/gudu/SSLM/SSLM/sankrit_corpus")
+    # create_vocab()
