@@ -12,8 +12,8 @@ tokenizer = tk.get_encoding("gpt2")
 with open(file_path, "r", encoding="utf-8") as file:
     text_data = file.read()
 
-# take only 10% of the original data for faster experimentation
-text_data = text_data[:int(0.1 * len(text_data))]
+# take only 20% of the original data for faster experimentation
+text_data = text_data[:int(0.2 * len(text_data))]
 
 # Train/validation ratio
 train_ratio = 0.90
@@ -70,7 +70,7 @@ print(f"Using {device} device.")
 
 model.to(device) # no assignment model = model.to(device) necessary for nn.Module classes
 optimizer = torch.optim.AdamW(model.parameters(), lr=0.0004, weight_decay=0.1)
-num_epochs = 2
+num_epochs = 3
 train_losses, val_losses, tokens_seen = gu.train_model_simple(model, train_loader, val_loader, optimizer, device, num_epochs=num_epochs, eval_freq=5, eval_iter=5, start_context="स ते वीर्यं बलं दर्पमुत्सेकं च तथाविधम्। व्यपनेष्यति गात्रेभ्यः", tokenizer=tokenizer)
 print("Training complete.")
 

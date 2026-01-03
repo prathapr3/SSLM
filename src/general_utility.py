@@ -1,6 +1,6 @@
 from torch.utils.data import DataLoader
 import tiktoken as tk
-from sanskrit_data_loader import GPTDatasetV1
+from sanskrit_data_loader import GPTDataset
 from sanskrit_llm import SanskritLLM, GPT_CONFIG_124M
 import torch
 import matplotlib.pyplot as plt
@@ -13,7 +13,7 @@ def create_dataloader(txt, batch_size=4, max_length=256, stride=128, shuffle=Tru
     # tokenizer = AutoTokenizer.from_pretrained("ArthaLabs/panini-tokenizer", trust_remote_code=True)
 
     # Create dataset
-    dataset = GPTDatasetV1(txt, tokenizer, max_length, stride)
+    dataset = GPTDataset(txt, tokenizer, max_length, stride)
 
     # Create dataloader
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, drop_last=drop_last, num_workers=num_workers)
