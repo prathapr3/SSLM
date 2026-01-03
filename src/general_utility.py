@@ -21,16 +21,15 @@ def create_dataloader_v1(txt, batch_size=4, max_length=256, stride=128, shuffle=
 def generate_text_simple(model, idx, max_new_tokens, context_size):
     # idx is (batch, n_tokens) array of indices in the current context
     for _ in range(max_new_tokens):
-        
         # Crop current context if it exceeds the supported context size
         # E.g., if LLM supports only 5 tokens, and the context size is 10
         # then only the last 5 tokens are used as context
         idx_cond = idx[:, -context_size:]
-        
+
         # Get the predictions
         with torch.no_grad():
             logits = model(idx_cond)
-        
+
         # Focus only on the last time step
         # (batch, n_tokens, vocab_size) becomes (batch, vocab_size)
         logits = logits[:, -1, :]  
